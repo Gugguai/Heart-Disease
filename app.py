@@ -92,7 +92,6 @@ if page == "项目介绍":
     - **展示**: Streamlit
     """)
     
-    st.image("https://img.freepik.com/free-vector/human-heart-anatomy-diagram_1308-125345.jpg?w=826&t=st=1708680000~exp=1708680600~hmac=...", caption="心脏结构示意图 (仅作装饰)", use_column_width=False, width=400)
 
 
 # B. 数据概览
