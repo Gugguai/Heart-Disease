@@ -16,8 +16,29 @@ st.set_page_config(
 )
 
 # 2. 配置 Matplotlib 中文支持
-# 尝试使用 SimHei 字体，如果不可用则回退到系统默认
-plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS', 'DejaVu Sans'] 
+import matplotlib.font_manager as fm
+import os
+import requests
+
+# 优先使用本地 SimHei.ttf
+font_path = 'SimHei.ttf'
+if not os.path.exists(font_path):
+    # 如果本地没有，尝试下载
+    try:
+        url = "https://github.com/StellarCN/scp_zh/raw/master/fonts/SimHei.ttf"
+        response = requests.get(url)
+        with open(font_path, "wb") as f:
+            f.write(response.content)
+    except Exception as e:
+        st.warning(f"无法下载中文字体文件，可能会导致中文显示乱码: {e}")
+
+if os.path.exists(font_path):
+    fm.fontManager.addfont(font_path)
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 字体文件名为 SimHei.ttf，通常对应的 Family 是 SimHei
+else:
+    # 回退方案
+    plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS', 'DejaVu Sans']
+
 plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 # 3. 数据加载与缓存
