@@ -1,0 +1,15 @@
+# 数据文件 (这些文件通常较大，不建议直接上传到 git)
+train.csv
+test.csv
+# submission.csv
+# submission_optimized.csv
+# submission_optimized_cv.csv
+
+# 虚拟环境
+venv/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+.vscode/
