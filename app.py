@@ -199,15 +199,25 @@ elif page == "模型可视化":
     st.title("🤖 XGBoost 模型可视化")
     st.write("以下图表展示了基于训练集和验证集的模型性能。")
     
-    # 尝试加载静态图片
+    # 自动检查并生成图片
     image_dir = "images"
+    feature_importance_path = os.path.join(image_dir, "feature_importance.png")
+    
+    if not os.path.exists(feature_importance_path):
+        with st.spinner("检测到本地缺少静态图表，正在首次生成（可能需要几分钟）..."):
+            try:
+                from generate_plots import generate_all_plots
+                generate_all_plots(output_dir=image_dir)
+                st.success("图表生成完成！")
+            except Exception as e:
+                st.error(f"图表生成失败: {e}")
     
     st.subheader("1. 特征重要性")
     st.write("展示了对模型预测贡献最大的特征。")
     try:
         st.image(os.path.join(image_dir, "feature_importance.png"), caption="XGBoost 特征重要性")
     except Exception:
-        st.error("无法加载特征重要性图片，请确保已运行 generate_plots.py 生成图片。")
+        st.error("无法加载特征重要性图片。")
     
     st.subheader("2. 混淆矩阵 (Validation Set)")
     st.write("展示了模型在验证集上的分类准确度。")
@@ -227,6 +237,18 @@ elif page == "模型可视化":
 # F. 预测结果
 elif page == "预测结果":
     st.title("📋 最终预测结果")
+    
+    # 同样检查图片是否存在（如果用户直接进入此页面）
+    image_dir = "images"
+    pred_dist_path = os.path.join(image_dir, "prediction_distribution.png")
+    
+    if not os.path.exists(pred_dist_path):
+         with st.spinner("检测到本地缺少静态图表，正在首次生成（可能需要几分钟）..."):
+            try:
+                from generate_plots import generate_all_plots
+                generate_all_plots(output_dir=image_dir)
+            except Exception as e:
+                st.error(f"图表生成失败: {e}")
     
     st.subheader("1. 提交文件预览")
     st.write("这是根据测试集生成的预测结果：")
