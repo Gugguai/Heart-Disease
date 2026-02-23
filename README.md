@@ -13,8 +13,10 @@
 
 ## 数据集
 
-本项目使用心脏病数据集，包含以下文件（由于文件较大，未直接包含在仓库中，请自行下载并放置在项目根目录）：
+本项目使用的数据集来源于 Kaggle 竞赛：
+**[Predicting Heart Disease | Kaggle](https://www.kaggle.com/competitions/playground-series-s6e2)**
 
+仓库中包含以下数据文件（部分大型文件使用 Git LFS 存储）：
 - `train.csv`: 训练数据集，包含特征和目标变量 `Heart Disease`。
 - `test.csv`: 测试数据集，用于生成预测结果。
 - `sample_submission.csv`: 提交文件示例格式。
