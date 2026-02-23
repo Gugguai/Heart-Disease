@@ -1,0 +1,10 @@
+id,Age,Sex,Chest pain type,BP,Cholesterol,FBS over 120,EKG results,Max HR,Exercise angina,ST depression,Slope of ST,Number of vessels fluro,Thallium,Heart Disease
+0,58,1,4,152,239,0,0,158,1,3.6,2,2,7,Presence
+1,52,1,1,125,325,0,2,171,0,0.0,1,0,3,Absence
+2,56,0,2,160,188,0,2,151,0,0.0,1,0,3,Absence
+3,44,0,3,134,229,0,2,150,0,1.0,2,0,3,Absence
+4,58,1,4,140,234,0,2,125,1,3.8,2,3,3,Presence
+5,38,1,4,138,283,0,0,147,1,1.6,2,2,7,Presence
+6,59,1,4,130,246,0,2,152,0,0.8,2,2,3,Presence
+7,60,0,3,120,245,0,0,151,0,1.2,1,0,3,Absence
+8,48,0,4,140,212,0,2,125,0,0.0,1,0,3,Absence
