@@ -197,91 +197,31 @@ elif page == "特征工程":
 # E. 模型可视化
 elif page == "模型可视化":
     st.title("🤖 XGBoost 模型可视化")
+    st.write("以下图表展示了基于训练集和验证集的模型性能。")
     
-    # 准备数据
-    processed_df = train_df.copy()
-    if processed_df['Heart Disease'].dtype == 'object':
-         processed_df['Heart Disease'] = processed_df['Heart Disease'].map({'Presence': 1, 'Absence': 0})
+    # 尝试加载静态图片
+    image_dir = "images"
     
-    # 确保没有 NaN
-    if processed_df['Heart Disease'].isnull().any():
-        processed_df = processed_df.dropna(subset=['Heart Disease'])
-        
-    X = processed_df.drop(['id', 'Heart Disease'], axis=1)
-    y = processed_df['Heart Disease']
-    
-    # 划分数据集
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    # 训练模型 (使用优化后的参数)
-    @st.cache_resource
-    def train_model():
-        model = XGBClassifier(
-            n_estimators=1000,
-            learning_rate=0.05,
-            max_depth=4,
-            min_child_weight=3,
-            gamma=0.1,
-            subsample=0.8,
-            colsample_bytree=0.8,
-            objective='binary:logistic',
-            eval_metric='logloss',
-            random_state=42,
-            n_jobs=-1,
-            early_stopping_rounds=50
-        )
-        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
-        return model
-
-    with st.spinner('正在训练模型，请稍候...'):
-        model = train_model()
-    
-    st.success("模型训练完成！")
-    
-    # 特征重要性
     st.subheader("1. 特征重要性")
-    fig6, ax6 = plt.subplots(figsize=(10, 8))
-    # 获取特征重要性
-    importances = model.feature_importances_
-    indices = np.argsort(importances)[::-1]
-    features = X.columns
+    st.write("展示了对模型预测贡献最大的特征。")
+    try:
+        st.image(os.path.join(image_dir, "feature_importance.png"), caption="XGBoost 特征重要性")
+    except Exception:
+        st.error("无法加载特征重要性图片，请确保已运行 generate_plots.py 生成图片。")
     
-    sns.barplot(x=importances[indices], y=features[indices], ax=ax6, palette="viridis")
-    ax6.set_title("XGBoost 特征重要性")
-    ax6.set_xlabel("重要性分数")
-    st.pyplot(fig6)
-    
-    # 混淆矩阵
     st.subheader("2. 混淆矩阵 (Validation Set)")
-    y_pred = model.predict(X_val)
-    cm = confusion_matrix(y_val, y_pred)
+    st.write("展示了模型在验证集上的分类准确度。")
+    try:
+        st.image(os.path.join(image_dir, "confusion_matrix.png"), caption="混淆矩阵")
+    except Exception:
+        st.error("无法加载混淆矩阵图片。")
     
-    fig7, ax7 = plt.subplots(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax7)
-    ax7.set_title("混淆矩阵")
-    ax7.set_xlabel("预测值")
-    ax7.set_ylabel("真实值")
-    st.pyplot(fig7)
-    
-    st.text("分类报告：")
-    st.text(classification_report(y_val, y_pred))
-    
-    # ROC 曲线
     st.subheader("3. ROC 曲线")
-    y_prob = model.predict_proba(X_val)[:, 1]
-    fpr, tpr, thresholds = roc_curve(y_val, y_prob)
-    roc_auc = auc(fpr, tpr)
-    
-    fig8, ax8 = plt.subplots(figsize=(10, 8))
-    ax8.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
-    ax8.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-    ax8.set_xlim([0.0, 1.0])
-    ax8.set_ylim([0.0, 1.05])
-    ax8.set_xlabel('False Positive Rate')
-    ax8.set_ylabel('True Positive Rate')
-    ax8.set_title('Receiver Operating Characteristic (ROC)')
-    ax8.legend(loc="lower right")
-    st.pyplot(fig8)
+    st.write("展示了模型的真正率与假正率之间的权衡。")
+    try:
+        st.image(os.path.join(image_dir, "roc_curve.png"), caption="ROC 曲线")
+    except Exception:
+        st.error("无法加载 ROC 曲线图片。")
 
 
 # F. 预测结果
@@ -293,17 +233,10 @@ elif page == "预测结果":
     st.dataframe(submission_df.head(10))
     
     st.subheader("2. 预测结果分布")
-    pred_counts = submission_df['Heart Disease'].value_counts()
-    
-    fig9, ax9 = plt.subplots(figsize=(8, 6))
-    sns.barplot(x=pred_counts.index, y=pred_counts.values, ax=ax9, palette="pastel")
-    ax9.set_title("测试集预测结果分布 (0: Absence, 1: Presence)")
-    ax9.set_ylabel("数量")
-    ax9.set_xlabel("预测类别")
-    # 添加数值标签
-    for i, v in enumerate(pred_counts.values):
-        ax9.text(i, v + 50, str(v), ha='center', fontweight='bold')
-    st.pyplot(fig9)
+    try:
+        st.image(os.path.join("images", "prediction_distribution.png"), caption="测试集预测结果分布")
+    except Exception:
+         st.error("无法加载预测结果分布图片。")
     
     st.subheader("3. 下载结果")
     
