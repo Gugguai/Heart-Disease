@@ -41,6 +41,21 @@ else:
 
 plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
+# GitHub 仓库原始图片的基础 URL (用于 Fallback)
+GITHUB_REPO_URL = "https://raw.githubusercontent.com/Gugguai/Heart-Disease/main/images/"
+
+def get_image_path(filename):
+    """
+    获取图片的路径。
+    1. 尝试本地 images 目录
+    2. 如果本地没有，尝试返回 GitHub Raw URL
+    """
+    local_path = os.path.join("images", filename)
+    if os.path.exists(local_path):
+        return local_path
+    else:
+        return f"{GITHUB_REPO_URL}{filename}"
+
 # 3. 数据加载与缓存
 @st.cache_data
 def load_data():
@@ -210,26 +225,26 @@ elif page == "模型可视化":
                 generate_all_plots(output_dir=image_dir)
                 st.success("图表生成完成！")
             except Exception as e:
-                st.error(f"图表生成失败: {e}")
+                pass # 忽略错误，尝试使用远程图片
     
     st.subheader("1. 特征重要性")
     st.write("展示了对模型预测贡献最大的特征。")
     try:
-        st.image(os.path.join(image_dir, "feature_importance.png"), caption="XGBoost 特征重要性")
+        st.image(get_image_path("feature_importance.png"), caption="XGBoost 特征重要性")
     except Exception:
         st.error("无法加载特征重要性图片。")
     
     st.subheader("2. 混淆矩阵 (Validation Set)")
     st.write("展示了模型在验证集上的分类准确度。")
     try:
-        st.image(os.path.join(image_dir, "confusion_matrix.png"), caption="混淆矩阵")
+        st.image(get_image_path("confusion_matrix.png"), caption="混淆矩阵")
     except Exception:
         st.error("无法加载混淆矩阵图片。")
     
     st.subheader("3. ROC 曲线")
     st.write("展示了模型的真正率与假正率之间的权衡。")
     try:
-        st.image(os.path.join(image_dir, "roc_curve.png"), caption="ROC 曲线")
+        st.image(get_image_path("roc_curve.png"), caption="ROC 曲线")
     except Exception:
         st.error("无法加载 ROC 曲线图片。")
 
@@ -248,7 +263,7 @@ elif page == "预测结果":
                 from generate_plots import generate_all_plots
                 generate_all_plots(output_dir=image_dir)
             except Exception as e:
-                st.error(f"图表生成失败: {e}")
+                pass # 忽略错误，尝试使用远程图片
     
     st.subheader("1. 提交文件预览")
     st.write("这是根据测试集生成的预测结果：")
@@ -256,7 +271,7 @@ elif page == "预测结果":
     
     st.subheader("2. 预测结果分布")
     try:
-        st.image(os.path.join("images", "prediction_distribution.png"), caption="测试集预测结果分布")
+        st.image(get_image_path("prediction_distribution.png"), caption="测试集预测结果分布")
     except Exception:
          st.error("无法加载预测结果分布图片。")
     
